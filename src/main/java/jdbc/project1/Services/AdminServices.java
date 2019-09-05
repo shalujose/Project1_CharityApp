@@ -5,73 +5,54 @@ import java.util.Scanner;
 
 import jdbc.project1.Model.Amount;
 import jdbc.project1.Model.Transaction;
+import jdbc.project1.UI.AdminUI;
 import jdbc.project1.dao.AdminDAO;
-import jdbc.project1.dao.IRequest;
-import jdbc.project1.exception.DBException;
+import jdbc.project1.dao.AdminDAOImp;
 
 public class AdminServices {
-	
-	static Scanner sc=new Scanner(System.in);
-	
+
+	static Scanner sc = new Scanner(System.in);
+
 	public static void admin_process() throws Exception {
-		System.out.println("\n=================================================================");
-		System.out.println("1. Send fund Request     | 2. View donors Response  ");
-		System.out.println("\n3. Close Request  | 4.Logout ");
-		System.out.println("=================================================================");
-		System.out.println("\nEnter Your choice :");
-		int val=sc.nextInt();
-		
-		if(val>0 && val<=4) {
-			switch (val) {
+
+		AdminUI.adminOptions();
+		if (AdminUI.val > 0 && AdminUI.val <= 4) {
+			switch (AdminUI.val) {
 			case 1:
-				AdminServices.sendRequest();	//Admin send request to donors
+				AdminUI.sendRequest(); // Admin send request to donors
+				admin_process();
 				break;
 			case 2:
-				IRequest request2=new AdminDAO();
-				List<Transaction> list =request2.viewResponse();
-				
-				for (Transaction translist1 : list) {
-					System.out.println(translist1);
+				AdminDAOImp request2 = new AdminDAO();
+				List<Transaction> list = request2.viewResponse();
+
+				for (Transaction response : list) {
+					System.out.println(response);
 				}
 				admin_process();
 				break;
 			case 3:
-				IRequest request3=new AdminDAO();
-				List<Amount> list1 =request3.matchAmount();
-				
-				for (Amount translist2 : list1) {
-					System.out.println(translist2);
+				AdminDAOImp request3 = new AdminDAO();
+				List<Amount> list1 = request3.matchAmount();
+
+				for (Amount displayAmount : list1) {
+					System.out.println(displayAmount);
 				}
-				
-				System.out.println("Enter the Request Id you want to close ");
-				int requestId=sc.nextInt();
-				AdminDAO.closeRequest(requestId);
-				
-					admin_process();
+
+				AdminUI.getRequestId();
+				AdminDAO.closeRequest(AdminUI.requestId);
+
+				admin_process();
 				break;
-			
-			
+
 			case 4:
 				CharityClass.welcomePage();
 			}
-		}else {
+		} else {
 			System.out.println("Please enter valid option!!! ");
 			admin_process();
-			
+
 		}
 	}
-	
-	public static void sendRequest() throws Exception{
-		try {
-		System.out.println("Enter the charity trust name ");
-		String charity_name=sc.next();
-		System.out.println("Enter the amount needed ");
-		double amount=sc.nextDouble();
-			AdminDAO.fund_request(charity_name, amount);
-		} 
-		catch (DBException e) {
-			e.printStackTrace();
-			throw new DBException("Unable to insert data");
-		}
-	}
+
 }

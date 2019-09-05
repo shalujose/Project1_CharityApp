@@ -3,11 +3,12 @@ package jdbc.project1.Util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ConnectionUtil {
 	
-	private static final String driverClassName = "com.mysql.jdbc.Driver";
+	private static final String driverClassName = "com.mysql.cj.jdbc.Driver";
 	private static final String url =  "jdbc:mysql://localhost:3306/charity_db";
 	private static final String username = "root";
 	private static final String password  = "root";
@@ -39,10 +40,18 @@ public static Connection getConnection()  {
 			if (con != null) con.close();
 		}
 		catch(Exception e) {
-			
+			System.out.println("Unable to close connection");
 		}
 		
 		
 	}
-
+	public static void closeRs(ResultSet rs) {
+		if(rs!=null)
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				System.out.println("Unable to close ResultSet");
+			}
+	}
 }
