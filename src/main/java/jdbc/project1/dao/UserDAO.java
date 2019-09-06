@@ -9,6 +9,7 @@ import java.util.Scanner;
 import jdbc.project1.Model.User;
 import jdbc.project1.Services.AdminServices;
 import jdbc.project1.Services.CharityClass;
+import jdbc.project1.UI.AdminUI;
 import jdbc.project1.Util.ConnectionUtil;
 import jdbc.project1.exception.DBException;
 
@@ -79,19 +80,15 @@ public class UserDAO implements IUserDAO {
 	}
 
 	public void LoginAdmin() throws Exception {
-		System.out.println("Login Here");
-		System.out.println("\nEnter your Name");
-		String name = sc.next();
-		System.out.println("Enter your Password");
-		String password = sc.next();
+		AdminUI.loginAadmin();
 		Connection con = ConnectionUtil.getConnection();
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		String sqls = "select name,password from admin_details where name=? and password=?";
 		try {
 			pst = con.prepareStatement(sqls);
-			pst.setString(1, name);
-			pst.setString(2, password);
+			pst.setString(1, AdminUI.name);
+			pst.setString(2, AdminUI.password);
 			rs = pst.executeQuery();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
@@ -101,7 +98,7 @@ public class UserDAO implements IUserDAO {
 			if (rs.next()) {
 				String name1 = rs.getString("name");
 				String password1 = rs.getString("password");
-				if (name.equals(name1) && password.equals(password1)) {
+				if (AdminUI.name.equals(name1) && AdminUI.password.equals(password1)) {
 					AdminServices.admin_process();
 				}
 			} else {

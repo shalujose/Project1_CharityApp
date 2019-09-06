@@ -11,6 +11,8 @@ public class AdminUI {
 	static Scanner sc=new Scanner(System.in);
 	public static int val;
 	public static int requestId;
+	public static String name;
+	public static String password;
 	public static void adminOptions() {
 		
 		System.out.println("\n***************************************************************");
@@ -37,5 +39,12 @@ public class AdminUI {
 	public static void getRequestId() {
 		System.out.println("Enter the Request Id you want to close ");
 		 requestId = sc.nextInt();
+	}
+	public static void loginAadmin() {
+		System.out.println("Login Here");
+		System.out.println("\nEnter your Name");
+		name = sc.next();
+		System.out.println("Enter your Password");
+		password = sc.next();
 	}
 }

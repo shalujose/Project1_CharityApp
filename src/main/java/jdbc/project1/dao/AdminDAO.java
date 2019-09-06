@@ -125,7 +125,7 @@ public class AdminDAO implements AdminDAOImp { // implementation of AdminDAOImp 
 
 		try {
 			// joins two tables to display Request amount and donated amount
-			String sql = "select r.request_id,r.amount,sum(t.amount) as Total from fund_request r inner join transactions t where r.request_id=t.fundrequest_id";
+			String sql = "select r.request_id,r.amount,sum(t.amount) as Total from fund_request r inner join transactions t where r.request_id=t.fundrequest_id group by r.request_id";
 			pst = con.prepareStatement(sql);
 			rs = pst.executeQuery();
 			List<Amount> list = new ArrayList<Amount>(); // ArrayList for display the amounts

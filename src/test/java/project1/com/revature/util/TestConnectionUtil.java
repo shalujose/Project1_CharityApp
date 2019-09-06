@@ -1,4 +1,4 @@
-package jdbc.project1;
+package project1.com.revature.util;
 
 import java.sql.Connection;
 
