@@ -1,6 +1,8 @@
 package jdbc.project1.Services;
 
 import java.util.List;
+
+import jdbc.project1.Model.Category;
 import jdbc.project1.Model.Request;
 import jdbc.project1.Model.User;
 import jdbc.project1.UI.UserUI;
@@ -8,6 +10,7 @@ import jdbc.project1.dao.AdminDAO;
 import jdbc.project1.dao.AdminDAOImp;
 import jdbc.project1.dao.IUserDAO;
 import jdbc.project1.dao.UserDAO;
+import jdbc.project1.exception.DBException;
 
 public class UserServices {
 
@@ -25,14 +28,15 @@ public class UserServices {
 			if (name.equals(userName) && password.equals(userPassword)) {
 
 				System.out.println("Log-in Succesfully ");
-				System.out.println("\nYour NAME: " + user.getName());
+				System.out.println("\nWelcome  " + user.getName());
+				System.out.println("\nYour account id is: "+user.getId()+" Keep your id safe");
 				UserServices.donors_process();
 			} else {
 				System.out.println("Invalid Name and Password!!!");
 				CharityClass.welcomePage();
 			}
-		} catch (RuntimeException e) {
-			throw new RuntimeException("Invalid Account number and Password. Enter valid one.");
+		} catch (DBException e) {
+			throw new DBException("Invalid Name and Password. Enter valid one.");
 		}
 
 	}
@@ -40,7 +44,7 @@ public class UserServices {
 	public static void donors_process() throws Exception { // donors_process() calls all donors features
 
 		UserUI.displayDonorOption();
-		if (UserUI.val > 0 && UserUI.val <= 3) {
+		if (UserUI.val > 0 && UserUI.val <= 4) {
 			switch (UserUI.val) {
 			case 1:
 				AdminDAOImp request1 = new AdminDAO();
@@ -54,12 +58,22 @@ public class UserServices {
 				break;
 
 			case 2:
+				IUserDAO request2 = new UserDAO();
+				List<Category> list1 = request2.displayCategory();
+
+				for (Category response : list1) {
+					System.out.println(response);
+				}
 				UserUI.getDonorFund();
-				UserDAO.donateFund(UserUI.request_id, UserUI.donor_id, UserUI.amount); // Donors send fund
+				UserDAO.donateFund(UserUI.request_id,UserUI.cate_id, UserUI.donor_id, UserUI.amount); // Donors send fund
+				donors_process();
+				break;
+				
+			case 3:
 				donors_process();
 				break;
 
-			case 3:
+			case 4:
 				CharityClass.welcomePage();
 				break;
 			}

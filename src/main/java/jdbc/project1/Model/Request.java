@@ -10,7 +10,7 @@ public class Request {
 	
 	@Override
 	public String toString() {
-		return "Request [Request Id= " + requestId + "   Charity Name= " + charityName + "   Request Date= " + dateOfRequest
+		return " [Request Id= " + requestId + "   Charity Name= " + charityName + "   Request Date= " + dateOfRequest
 				+ "   Amount= " + amount + "   Request Status= " + status + "]";
 	}
 	public int getRequestId() {

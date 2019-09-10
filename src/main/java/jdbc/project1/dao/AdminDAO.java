@@ -15,16 +15,15 @@ import jdbc.project1.exception.DBException;
 
 public class AdminDAO implements AdminDAOImp { // implementation of AdminDAOImp interface for AdminDAO
 
-	public void fund_request(String request_type, double amount) throws Exception { // This method is used for generate
-																					// fund request
+	public void fund_request(int category_Id, double amount) throws Exception { // This method is used for generate fund request
 
 		Connection con = ConnectionUtil.getConnection();
 		PreparedStatement pst = null;
-		String sql = "insert into fund_request(request_type,amount) values (?,?)";
+		String sql = "insert into fund_request(category_Id,amount) values (?,?)";
 		try {
 
 			pst = con.prepareStatement(sql);
-			pst.setString(1, request_type);
+			pst.setInt(1, category_Id);
 			pst.setDouble(2, amount);
 			pst.executeUpdate();
 			System.out.println("\nYour Request has been successfully sended");
@@ -44,7 +43,7 @@ public class AdminDAO implements AdminDAOImp { // implementation of AdminDAOImp 
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		try {
-			String sql = "select request_id,request_type,date_of_request,amount,status from fund_request where status='Open' order by date_of_request";
+			String sql = "select request_id,category_Id,date_of_request,amount,status from fund_request where status='Open' order by date_of_request";
 			pst = con.prepareStatement(sql);
 			rs = pst.executeQuery();
 			List<Request> list = new ArrayList<Request>(); // ArrayList for display the table data
@@ -62,7 +61,7 @@ public class AdminDAO implements AdminDAOImp { // implementation of AdminDAOImp 
 	private static Request toRow1(ResultSet rs) throws SQLException {
 
 		int requestId = rs.getInt("request_id");
-		String requestName = rs.getString("request_type");
+		String requestName = rs.getString("category_Id");
 		String dateOfRequest = rs.getString("date_of_request");
 		double amount = rs.getInt("amount");
 		String status = rs.getString("status");
@@ -83,7 +82,7 @@ public class AdminDAO implements AdminDAOImp { // implementation of AdminDAOImp 
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		try {
-			String sql = "select transaction_id,date_of_transaction,fundrequest_id,donor_id,amount from transactions order by fundrequest_id desc limit 5";
+			String sql = "select t.transaction_id,t.date_of_transaction,t.fundrequest_id,t.cate_id,d.name,t.donor_id,t.amount from transactions t inner join donors_details d where t.donor_id=d.id group by t.cate_id order by t.donor_id";
 			pst = con.prepareStatement(sql);
 			rs = pst.executeQuery();
 			List<Transaction> list = new ArrayList<Transaction>(); // ArrayList for display the transaction data
@@ -105,6 +104,8 @@ public class AdminDAO implements AdminDAOImp { // implementation of AdminDAOImp 
 		int transactionId = rs.getInt("transaction_id");
 		String dateOfTransaction = rs.getString("date_of_transaction");
 		int fundRequestId = rs.getInt("fundrequest_id");
+		int cateId = rs.getInt("cate_id");
+		String name=rs.getString("name");
 		int donorId = rs.getInt("donor_id");
 		double amount = rs.getInt("amount");
 
@@ -112,6 +113,8 @@ public class AdminDAO implements AdminDAOImp { // implementation of AdminDAOImp 
 		response.setTransaction_id(transactionId);
 		response.setDate_of_transaction(dateOfTransaction);
 		response.setFundrequest_id(fundRequestId);
+		response.setCate_id(cateId);
+		response.setName(name);
 		response.setDonor_id(donorId);
 		response.setAmount(amount);
 		return response;
@@ -125,7 +128,7 @@ public class AdminDAO implements AdminDAOImp { // implementation of AdminDAOImp 
 
 		try {
 			// joins two tables to display Request amount and donated amount
-			String sql = "select r.request_id,r.amount,sum(t.amount) as Total from fund_request r inner join transactions t where r.request_id=t.fundrequest_id group by r.request_id";
+			String sql = "select r.request_id,r.amount,sum(t.amount) as Total from fund_request r inner join transactions t where r.request_id=t.fundrequest_id and r.status='Open' group by r.request_id";
 			pst = con.prepareStatement(sql);
 			rs = pst.executeQuery();
 			List<Amount> list = new ArrayList<Amount>(); // ArrayList for display the amounts
@@ -156,7 +159,7 @@ public class AdminDAO implements AdminDAOImp { // implementation of AdminDAOImp 
 		return displayAmount;
 	}
 
-	public static void closeRequest(int request_id) throws Exception { // This method is used for generate fund request
+	public static void closeRequest(int request_id) throws DBException { // This method is used for generate fund request
 
 		Connection con = ConnectionUtil.getConnection();
 		PreparedStatement pst = null;
@@ -177,4 +180,43 @@ public class AdminDAO implements AdminDAOImp { // implementation of AdminDAOImp 
 
 	}
 
+	public void resetPasword(String password) throws Exception { // This method is used for reset admin password
+
+		Connection con = ConnectionUtil.getConnection();
+		PreparedStatement pst = null;
+		String sql = "update admin_details set password=?";
+		try {
+
+			pst = con.prepareStatement(sql);
+			pst.setString(1, password);
+			pst.executeUpdate();
+			System.out.println("\nYour Password is changed!!! ");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DBException("Unable to change password", e);
+		} finally {
+			ConnectionUtil.close(con, pst);
+		}
+
+	}
+
+	public void addCategory(String category_name) throws DBException { // addCategory() used to add different request categories 
+
+		Connection con = ConnectionUtil.getConnection();
+		PreparedStatement pst = null;
+		String sql = "insert into request_category(category_name) values (?)";
+		try {
+
+			pst = con.prepareStatement(sql);
+			pst.setString(1, category_name);
+			pst.executeUpdate();
+			System.out.println("\nNew category added successfully!!!");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DBException("Unable to add new category ", e);
+		} finally {
+			ConnectionUtil.close(con, pst);
+		}
+
+	}
 }

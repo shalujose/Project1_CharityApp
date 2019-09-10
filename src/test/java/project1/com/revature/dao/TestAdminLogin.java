@@ -15,10 +15,10 @@ public class TestAdminLogin {
 
 	@Test
 	public void TestAdmin() {
-		
-		IUserDAO userobj=new UserDAO();
-		String name="";
-		String password="";
+
+		IUserDAO userobj = new UserDAO();
+		String name = "";
+		String password = "";
 		User user = null;
 		try {
 			user = userobj.findByNamePassword(name, password);
@@ -30,11 +30,27 @@ public class TestAdminLogin {
 		assertNull(user);
 	}
 
-public void TestInvalidAdmin() {
-		
-		IUserDAO userobj=new UserDAO();
-		String name="admin";
-		String password="pass123";
+	public void TestInvalidAdmin() {
+
+		IUserDAO userobj = new UserDAO();
+		String name = "admin";
+		String password = "pass123";
+		User user = null;
+		try {
+			user = userobj.findByNamePassword(name, password);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (DBException e) {
+			e.printStackTrace();
+		}
+		assertNotNull(user);
+	}
+
+	public void TestValidAdmin() {
+
+		IUserDAO userobj = new UserDAO();
+		String name = "admin";
+		String password = "admin@123";
 		User user = null;
 		try {
 			user = userobj.findByNamePassword(name, password);

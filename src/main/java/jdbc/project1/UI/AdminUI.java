@@ -13,11 +13,13 @@ public class AdminUI {
 	public static int requestId;
 	public static String name;
 	public static String password;
+	public static String categoryName;
 	public static void adminOptions() {
 		
 		System.out.println("\n***************************************************************");
 		System.out.println("\n1. Send fund Request      2. View donors Response  ");
-		System.out.println("\n3. Close Request        4.Logout ");
+		System.out.println("\n3. Change Password        4. Add Categories");
+		System.out.println("\n5. Close Request          6.Logout ");
 		System.out.println("*****************************************************************");
 		System.out.println("\nEnter Your choice :");
 		 val = sc.nextInt();
@@ -25,12 +27,12 @@ public class AdminUI {
 	}
 	public static void sendRequest() throws Exception {
 		try {
-			System.out.println("Enter the type of request you need");
-			String request_type = sc.next();
+			System.out.println("Enter the category Id you need");
+			int request_typeId = sc.nextInt();
 			System.out.println("Enter the amount needed ");
 			double amount = sc.nextDouble();
 			AdminDAOImp admindao=new AdminDAO();
-			admindao.fund_request(request_type, amount);
+			admindao.fund_request(request_typeId, amount);
 		} catch (DBException e) {
 			e.printStackTrace();
 			throw new DBException("Unable to insert data");
@@ -47,4 +49,15 @@ public class AdminUI {
 		System.out.println("Enter your Password");
 		password = sc.next();
 	}
+	public static String changePsw() {
+		
+		System.out.println("\nEnter Your new Password");
+		password=sc.next();
+		return password;
+	}
+	public static void getCategory() {
+		System.out.println("\nEnter the category name ");
+		categoryName=sc.next();
+	}
+	
 }

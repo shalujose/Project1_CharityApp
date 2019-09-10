@@ -2,8 +2,8 @@ package jdbc.project1.Services;
 
 import java.util.Scanner;
 
+import jdbc.project1.UI.DonorRegistration;
 import jdbc.project1.UI.UserUI;
-import jdbc.project1.UI.donorRegistration;
 import jdbc.project1.dao.IUserDAO;
 import jdbc.project1.dao.UserDAO;
 import jdbc.project1.exception.DBException;
@@ -17,12 +17,11 @@ public class CharityClass {
 	}
 
 	public static void userType() { // userType() check the user is admin or donor
-
 		
 		UserUI.firstPage();
 		if (UserUI.type == 1) {
 			try {
-				IUserDAO iu=new UserDAO();
+				IUserDAO iu = new UserDAO();
 				iu.LoginAdmin();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -36,11 +35,12 @@ public class CharityClass {
 	}
 
 	public static void welcomePage() { // welcomepage() used makes selection of donor functionalities
+		
 		UserUI.displayRegisLogin();
 		switch (UserUI.op) {
 		case 1:
 			try {
-				donorRegistration.register();
+				DonorRegistration.register();
 			} catch (DBException e) {
 				e.printStackTrace();
 			}
@@ -58,6 +58,10 @@ public class CharityClass {
 		case 3:
 			System.out.println("Visit Again Thank you!!!");
 			break;
+
+		default:
+			System.out.println("\nPlease Enter valid option!!!");
+			welcomePage();
 		}
 
 	}

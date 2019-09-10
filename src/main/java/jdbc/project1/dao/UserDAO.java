@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import jdbc.project1.Model.Category;
 import java.util.Scanner;
 
 import jdbc.project1.Model.User;
@@ -47,7 +50,7 @@ public class UserDAO implements IUserDAO {
 
 	public User findByNamePassword(String name, String password) throws DBException, SQLException {
 		Connection con = ConnectionUtil.getConnection();
-		String sql = "select name,gender,age,address,email,phone,password from donors_details where name = ? and Password = ?";
+		String sql = "select id,name,gender,age,address,email,phone,password from donors_details where name = ? and Password = ?";
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		try {
@@ -72,9 +75,11 @@ public class UserDAO implements IUserDAO {
 
 		String name = rs.getString("name");
 		String password = rs.getString("password");
+		int id = rs.getInt("id");
 		User user = new User();
 		user.setName(name);
 		user.setPassword(password);
+		user.setId(id);
 
 		return user;
 	}
@@ -102,8 +107,8 @@ public class UserDAO implements IUserDAO {
 					AdminServices.admin_process();
 				}
 			} else {
-				System.out.println("Please enter username and password Carefully");
-				IUserDAO iudao=new UserDAO();
+				System.out.println("\nPlease enter username and password Carefully");
+				IUserDAO iudao = new UserDAO();
 				iudao.LoginAdmin();
 			}
 
@@ -117,18 +122,19 @@ public class UserDAO implements IUserDAO {
 
 	}
 
-	public static void donateFund(int fundrequest_id, int donor_id, double amount) throws DBException {
+	public static void donateFund(int fundrequest_id, int cate_id, int donor_id, double amount) throws DBException {
 
 		Connection con = null;
 		PreparedStatement pst = null;
-		String sql = "insert into transactions(fundrequest_id,donor_id,amount) values ( ?,?,?)";
+		String sql = "insert into transactions(fundrequest_id,cate_id,donor_id,amount) values ( ?,?,?,?)";
 
 		try {
 			con = ConnectionUtil.getConnection();
 			pst = con.prepareStatement(sql);
 			pst.setInt(1, fundrequest_id);
-			pst.setInt(2, donor_id);
-			pst.setDouble(3, amount);
+			pst.setInt(2, cate_id);
+			pst.setInt(3, donor_id);
+			pst.setDouble(4, amount);
 			pst.executeUpdate();
 			System.out.println("\nYour Transaction Successfully completed\n");
 		} catch (SQLException e) {
@@ -140,4 +146,34 @@ public class UserDAO implements IUserDAO {
 
 	}
 
+	public List<Category> displayCategory() throws SQLException { // This method is used to display category list 
+
+		Connection con = ConnectionUtil.getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		try {
+			String sql = "select category_Id,category_name from request_category";
+			pst = con.prepareStatement(sql);
+			rs = pst.executeQuery();
+			List<Category> list1 = new ArrayList<Category>(); // ArrayList for display the table data
+			while (rs.next()) {
+				Category catelist = toRowCategory(rs);
+				list1.add(catelist);
+			}
+			return list1;
+		} finally {
+			ConnectionUtil.close(con, pst);
+			ConnectionUtil.closeRs(rs);
+		}
+	}
+	private Category toRowCategory(ResultSet rs) throws SQLException {
+
+		int cateId = rs.getInt("category_id");
+		String cateName = rs.getString("category_name");
+		Category catelist = new Category();
+		catelist.setCategory_id(cateId);
+		catelist.setCategory_name(cateName);
+		
+		return catelist;
+	}
 }

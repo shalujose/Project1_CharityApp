@@ -4,7 +4,7 @@ public class Amount {
 	private int requestId;
 	@Override
 	public String toString() {
-		return "Amount [RequestId= " + requestId + "   Request Amount= " + requestAmount + "   Donated Amount= " + totalAmount
+		return " [RequestId= " + requestId + "   Request Amount= " + requestAmount + "   Donated Amount= " + totalAmount
 				+ "]";
 	}
 	private Double requestAmount;
